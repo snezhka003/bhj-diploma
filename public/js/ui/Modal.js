@@ -4,15 +4,16 @@
  * В первую очередь это открытие или
  * закрытие имеющихся окон
  * */
-class Modal {
+class Modal extends BaseConstructor {
   /**
    * Устанавливает текущий элемент в свойство element
    * Регистрирует обработчики событий с помощью Modal.registerEvents()
    * Если переданный элемент не существует,
    * необходимо выкинуть ошибку.
    * */
-  constructor(element){
-
+  constructor(element) {
+    super (element);
+    this.registerEvents();
   }
 
   /**
@@ -21,27 +22,32 @@ class Modal {
    * (с помощью метода Modal.onClose)
    * */
   registerEvents() {
-
+    this.element.querySelectorAll('button[data-dismiss="modal"]').forEach(element => {
+        element.addEventListener('click', (event) => {
+            this.onClose(event);
+        });
+    })
   }
 
   /**
    * Срабатывает после нажатия на элементы, закрывающие окно.
    * Закрывает текущее окно (Modal.close())
    * */
-  onClose(e) {
-
+  onClose() {
+    this.close();
   }
+
   /**
    * Открывает окно: устанавливает CSS-свойство display
    * со значением «block»
    * */
   open() {
-
+    this.element.style.display = 'block';
   }
   /**
    * Закрывает окно: удаляет CSS-свойство display
    * */
-  close(){
-
+  close() {
+    this.element.style.display = 'none';
   }
 }

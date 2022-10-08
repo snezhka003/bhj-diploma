@@ -8,8 +8,10 @@ class User {
    * Устанавливает текущего пользователя в
    * локальном хранилище.
    * */
-  static setCurrent(user) {
+  static url = '/user';
 
+  static setCurrent(user) {
+     window.localStorage.user = JSON.stringify(user);
   }
 
   /**
@@ -17,7 +19,7 @@ class User {
    * пользователе из локального хранилища.
    * */
   static unsetCurrent() {
-
+    window.localStorage.removeItem('user');
   }
 
   /**
@@ -25,7 +27,11 @@ class User {
    * из локального хранилища
    * */
   static current() {
-
+    try {
+      return JSON.parse(window.localStorage.user);
+    } catch {
+        return undefined;
+    }
   }
 
   /**
@@ -33,7 +39,18 @@ class User {
    * авторизованном пользователе.
    * */
   static fetch(callback) {
-
+    createRequest({
+      url: this.url + '/current',
+      method: 'GET',
+      callback: (error, response) => {
+          if (response && response.user) {
+              this.setCurrent(response.user);
+          } else {
+              this.unsetCurrent();
+          }
+          callback(error, response);
+      }
+    });
   }
 
   /**
@@ -42,17 +59,16 @@ class User {
    * сохранить пользователя через метод
    * User.setCurrent.
    * */
-  static login(data, callback) {
+   static login(data, callback) {
     createRequest({
-      url: this.URL + '/login',
+      url: this.url + '/login',
       method: 'POST',
-      responseType: 'json',
-      data,
-      callback: (err, response) => {
+      body: data,
+      callback: (error, response) => {
         if (response && response.user) {
           this.setCurrent(response.user);
         }
-        callback(err, response);
+        callback(error, response);
       }
     });
   }
@@ -64,7 +80,17 @@ class User {
    * User.setCurrent.
    * */
   static register(data, callback) {
-
+    createRequest({
+      method: 'POST',
+      url: this.url + '/register',
+      body: data,
+      callback: (error, response) => {
+        if (response && response.user) {
+          this.setCurrent(response.user);
+        }
+        callback(error, response);
+      }
+    });
   }
 
   /**
@@ -72,6 +98,15 @@ class User {
    * выхода необходимо вызвать метод User.unsetCurrent
    * */
   static logout(callback) {
-
+    createRequest({
+      method: 'POST',
+      url: this.url + '/logout',
+      callback: (error, response) => {
+        if (response.success) {
+          this.unsetCurrent();
+        }
+        callback(error, response);
+      }
+    });
   }
 }
