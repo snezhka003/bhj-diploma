@@ -28,8 +28,9 @@ class AccountsWidget extends BaseConstructor {
    * */
   registerEvents() {
     const createAccount = this.element.querySelector('.create-account');
+    
     createAccount.addEventListener('click', () => App.getModal('createAccount').open());
-    this.element.addEventListener( 'click', e => this.onSelectAccount(e.target.closest( '.account' )));
+    this.element.addEventListener('click', e => this.onSelectAccount(e.target.closest('.account')));
   }
 
   /**

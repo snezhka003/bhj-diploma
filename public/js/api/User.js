@@ -98,15 +98,17 @@ class User {
    * выхода необходимо вызвать метод User.unsetCurrent
    * */
   static logout(callback) {
-    createRequest({
-      method: 'POST',
-      url: this.url + '/logout',
-      callback: (error, response) => {
-        if (response.success) {
-          this.unsetCurrent();
+    if (confirm('Вы действительно хотите выйти из личного кабинета?')) {
+      createRequest({
+        method: 'POST',
+        url: this.url + '/logout',
+        callback: (error, response) => {
+          if (response.success) {
+            this.unsetCurrent();
+          }
+          callback(error, response);
         }
-        callback(error, response);
-      }
-    });
+      });
+    }
   }
 }
